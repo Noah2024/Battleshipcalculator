@@ -1,4 +1,4 @@
-import numeric from "numeric";
+
 const row = 10;
 const col = 10;
 const shipsLeft = {5: [1], 4: [1], 3: [2], 2: [1]};
@@ -10,8 +10,14 @@ function create2dArray(row, col){
     return array;
 }
 
-let statusArray = create2dArray(row, col);
+function addArrays(arr1, arr2) {//Github Copilot generated
+    if (arr1.length !== arr2.length) {
+        throw new Error("Arrays must have the same length");
+    }
+    return arr1.map((val, index) => val + arr2[index]);
+}
 
+let statusArray = create2dArray(row, col);
 let probArray = create2dArray(row, col);
 
 
@@ -28,7 +34,7 @@ for (let i = 0; i < row; i+=1){
         continousSpaces += 1;
     }
 }
-console.log(addMatrices([0,2,0], [1,1,1]));
+console.log(addArrays([0,2,0], [1,1,1]));
 /*if (statusArray[i][j] != 0){
     if (j - continousSpaces <! 0){
         let start = j - continousSpaces;
