@@ -1,10 +1,8 @@
+import numeric from "numeric";
 const row = 10;
 const col = 10;
 const shipsLeft = {5: [1], 4: [1], 3: [2], 2: [1]};
 
-function addMatrices(mat1, mat2) {
-    return mat1.map((row, i) => row.map((val, j) => val + mat2[i][j]));
-}
 function create2dArray(row, col){
     array = Array.from({"length": row}, () => 
         Array.from({"length": col}, () => 0)
