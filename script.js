@@ -1,7 +1,7 @@
 
 const row = 10;
 const col = 10;
-const shipsLen = {"carrier": [1,1,1,1,1], "battleship": [1,1,1,1], "crusier": [1,1,1], "submarine": [1,1,1], "destroyer": [1,1]};
+const shipsLen = {"carrier": "11111", "battleship": "1111", "crusier": "111", "submarine": "111", "destroyer": "11"};
 const shipsLeft = ["carrier", "battleship", "crusier", "submarine", "destroyer"]
 
 function create2dArray(row, col){
@@ -34,16 +34,19 @@ function updateHorizontalProb() {
         const curtShipLen = shipsLen[ship].length;
         console.log(curtShipArr);
         for (let i = 0; i < row; i +=1){
-            for (let j = 0; j <= col; j += 1){
-                if (sumArray(statusArray.slice(j, j+curtShipLen)) != 0){
-                    console.log(col);
-                    console.log(j+curtShipLen);
-                    startOnes = Array();
-                    endOnes = Array();//col-(j+curtShipLen)
+            for (let j = 0; j+curtShipLen <= col; j += 1){
+                if (sumArray(statusArray.slice(j, j+curtShipLen)) != 0){//Checks if there are any ones in the status array
+                    const endOffset = col-(j+curtShipLen) //The offset from the front added to allow the addition of the arrays
+                    const startOffset  = j //The offset from the back added to allow the addition of the arrays
+                    let addlArray = "0".repeat(startOffset) + curtShipArr + "0".repeat(endOffset);
+                    addlArray = addlArray.split("").map(Number);//Convert string to array
+                    probArray[i] = addArrays(probArray[i], addlArray);
                 }
+                console.log(probArray[i]);
             }
         }
     }
+    console.log(probArray);
 }
 
 updateHorizontalProb();
