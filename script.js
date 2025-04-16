@@ -28,7 +28,8 @@ function sumStr(str){
 statusArray = Array.from({length: row}, () => "0".repeat(col));
 let probArray = create2dArray(row, col);
 
-statusArray[1] = "1111111000";
+statusArray[1] = "10000000000";
+statusArray[9] = "00000000001";
 console.log(statusArray, probArray);
 
 function updateHorizontalProb() {
@@ -55,12 +56,17 @@ function updateVerticalProb() {
     for (const ship of shipsLeft){
         const curtShipArr = shipsLen[ship];
         const curtShipLen = shipsLen[ship].length;
-        console.log(curtShipArr);
         for (let i = 0; i < col; i +=1){
-            const verticalSlice = statusArray.slice(i, i+curtShipLen)
+            let verticalSlice = "";
+            statusArray.map((val) => {
+                verticalSlice += val[i]
+                console.log(val[i]);
+            } );
+            console.log(verticalSlice);
         }
-    console.log(probArray);
     }
+console.log(probArray);
 }
 
-updateHorizontalProb()
+//updateHorizontalProb()
+updateVerticalProb()
