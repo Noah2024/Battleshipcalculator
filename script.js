@@ -25,15 +25,23 @@ function sumArray(arr){
 let statusArray = create2dArray(row, col);
 let probArray = create2dArray(row, col);
 
-statusArray[0][5] = 1;
+//statusArray[0][5] = 1;
 console.log(statusArray, probArray);
 
 function updateHorizontalProb() {
     for (const ship of shipsLeft){
-        curtShipLen = shipsLen[ship];
-        console.log(curtShipLen);
+        const curtShipArr = shipsLen[ship];
+        const curtShipLen = shipsLen[ship].length;
+        console.log(curtShipArr);
         for (let i = 0; i < row; i +=1){
-            
+            for (let j = 0; j <= col; j += 1){
+                if (sumArray(statusArray.slice(j, j+curtShipLen)) != 0){
+                    console.log(col);
+                    console.log(j+curtShipLen);
+                    startOnes = Array();
+                    endOnes = Array();//col-(j+curtShipLen)
+                }
+            }
         }
     }
 }
