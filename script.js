@@ -11,6 +11,9 @@ function create2dArray(row, col){
     return array;
 }
 
+let allChanceArray = create2dArray(row, col);
+let probArray = create2dArray(row, col);
+
 function addArrays(arr1, arr2) {//Github Copilot generated
     if (arr1.length !== arr2.length) {
         throw new Error("Arrays must have the same length");
@@ -24,14 +27,6 @@ function sumStr(str){
     return sum;
     //arr.reduce((sum, val) => sum + val, 0); used for summingArrays
 }
-
-statusArray = Array.from({length: row}, () => "0".repeat(col));
-let allChanceArray = create2dArray(row, col);
-let probArray = create2dArray(row, col);
-
-//statusArray[1] = "10000000000";
-//statusArray[9] = "10000000000";
-console.log(statusArray, allChanceArray);
 
 function updateHorizontalProb() {
     for (const ship of shipsLeft){
@@ -51,7 +46,6 @@ function updateHorizontalProb() {
             }
         }
     }
-    console.log(allChanceArray);
 }
 
 function updateVerticalProb() {
@@ -89,8 +83,22 @@ function updateProbArray(){
     for (let i = 0; i < row; i += 1){
         allChanceArray[i].map((val, index) => probArray[i][index] = val/sum);
     }
-    console.log(`Prob Array`, probArray);
 }
-updateHorizontalProb()
-updateVerticalProb()
-updateProbArray()
+
+function setStatusArray(row, col, value){
+    statusArray[row] = statusArray[row].substring(0, col) + value + statusArray[row].substring(col + 1);
+    updateHorizontalProb();
+    updateVerticalProb();
+    updateProbArray();
+}
+
+function getStatusArray(){
+    return statusArray;
+}
+
+//exmpleUsage
+//setStatusArray(1, 0, "1");
+//setStatusArray(9, 1, "1");
+//spdateHorizontalProb();
+//spdateVerticalProb();
+//spdateProbArray();
