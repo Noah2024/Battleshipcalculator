@@ -26,47 +26,60 @@ function sumStr(str){
 }
 
 statusArray = Array.from({length: row}, () => "0".repeat(col));
+let allChanceArray = create2dArray(row, col);
 let probArray = create2dArray(row, col);
 
 statusArray[1] = "10000000000";
-statusArray[9] = "00000000001";
-console.log(statusArray, probArray);
+statusArray[9] = "10000000000";
+console.log(statusArray, allChanceArray);
 
 function updateHorizontalProb() {
     for (const ship of shipsLeft){
         const curtShipArr = shipsLen[ship];
         const curtShipLen = shipsLen[ship].length;
-        console.log(curtShipArr);
+
         for (let i = 0; i < row; i +=1){
+
             for (let j = 0; j+curtShipLen <= col; j += 1){//sumArray(statusArray.slice(j, j+curtShipLen)
                 if (sumStr(statusArray[i].slice(j, j+curtShipLen)) == 0){//Checks if there are any ones in the status array
                     const endOffset = col-(j+curtShipLen) //The offset from the front added to allow the addition of the arrays
                     const startOffset  = j //The offset from the back added to allow the addition of the arrays
                     let addlArray = "0".repeat(startOffset) + curtShipArr + "0".repeat(endOffset);
                     addlArray = addlArray.split("").map(Number);//Convert string to array
-                    probArray[i] = addArrays(probArray[i], addlArray);
+                    allChanceArray[i] = addArrays(allChanceArray[i], addlArray);
                 }
             }
         }
     }
-    console.log(probArray);
+    console.log(allChanceArray);
 }
 
 function updateVerticalProb() {
     for (const ship of shipsLeft){
         const curtShipArr = shipsLen[ship];
         const curtShipLen = shipsLen[ship].length;
+
         for (let i = 0; i < col; i +=1){
             let verticalSlice = "";
-            statusArray.map((val) => {
-                verticalSlice += val[i]
-                console.log(val[i]);
-            } );
-            console.log(verticalSlice);
+            statusArray.map((val) => verticalSlice += val[i]);
+
+            for (let j = 0; j+curtShipLen <= row; j += 1){
+                if (sumStr(verticalSlice.slice(j, j+curtShipLen)) == 0){//Checks if there are any ones in the status array
+                    const endOffset = row-(j+curtShipLen) //The offset from the front added to allow the addition of the arrays
+                    const startOffset  = j //The offset from the back added to allow the addition of the arrays
+                    let addlArray = "0".repeat(startOffset) + curtShipArr + "0".repeat(endOffset);
+                    addlArray = addlArray.split("").map(Number);//Convert string to array
+                    //allChanceArray[i] = addArrays(allChanceArray[i], addlArray);
+
+                    for (let k = 0; k < row; k++) {//updatig prob array colum wise
+                        allChanceArray[k][i] += addlArray[k];
+                    }
+                    
+                }
+            }
         }
     }
-console.log(probArray);
 }
 
-//updateHorizontalProb()
+updateHorizontalProb()
 updateVerticalProb()
