@@ -29,8 +29,8 @@ statusArray = Array.from({length: row}, () => "0".repeat(col));
 let allChanceArray = create2dArray(row, col);
 let probArray = create2dArray(row, col);
 
-statusArray[1] = "10000000000";
-statusArray[9] = "10000000000";
+//statusArray[1] = "10000000000";
+//statusArray[9] = "10000000000";
 console.log(statusArray, allChanceArray);
 
 function updateHorizontalProb() {
@@ -81,5 +81,16 @@ function updateVerticalProb() {
     }
 }
 
+function updateProbArray(){
+    sum = 0;
+    for (let i = 0; i < row; i += 1){
+        allChanceArray[i].map((val) => sum += val);
+    }
+    for (let i = 0; i < row; i += 1){
+        allChanceArray[i].map((val, index) => probArray[i][index] = val/sum);
+    }
+    console.log(`Prob Array`, probArray);
+}
 updateHorizontalProb()
 updateVerticalProb()
+updateProbArray()
