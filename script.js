@@ -11,8 +11,10 @@ function create2dArray(row, col){
     return array;
 }
 
-let allChanceArray = create2dArray(row, col);
-let probArray = create2dArray(row, col);
+function createArrays(){
+    let allChanceArray = create2dArray(row, col);
+    let probArray = create2dArray(row, col);
+}
 
 function addArrays(arr1, arr2) {//Github Copilot generated
     if (arr1.length !== arr2.length) {
@@ -63,8 +65,8 @@ function updateVerticalProb() {
                     const startOffset  = j //The offset from the back added to allow the addition of the arrays
                     let addlArray = "0".repeat(startOffset) + curtShipArr + "0".repeat(endOffset);
                     addlArray = addlArray.split("").map(Number);//Convert string to array
-                    //allChanceArray[i] = addArrays(allChanceArray[i], addlArray);
-
+                    allChanceArray[i] = addArrays(allChanceArray[i], addlArray);
+                    
                     for (let k = 0; k < row; k++) {//updatig prob array colum wise
                         allChanceArray[k][i] += addlArray[k];
                     }
