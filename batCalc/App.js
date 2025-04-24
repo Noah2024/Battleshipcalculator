@@ -12,14 +12,26 @@ function print(){
 gameInfo = new gameSpace(10, 10);
 
 export default function App() {
-  const [buttonState, setButtonStyle] = useState(styles.button)
-  const [btnStatus, setBtnStatus] = useState("0"); // State to manage button status
-  
+  const indexToLetter = Object.fromEntries([...Array(26)].map((_, i) => [i, String.fromCharCode(65 + i)]));
+  const [heatMapState, setHeatMapState] = useState();
+  const [buttonStates, setButtonStates] = useState(
+    Array(10).fill(null).map(() => Array(10).fill(styles.button)) // 10x10 grid of default styles
+  );
+
+  function updateheatMapState(){
+    console.log(gameInfo.getProbArray());
+
+    // setHeatMapState(prevState => {
+    //   console.log(gameInfo.getProbArray());
+    //   const newState = [...prevState]; // Create a copy of the previous state
+    // })
+  }
+
   function createNewBoxComponent(x, y){
     return (
       <TouchableOpacity
           key={`${x}-${y}`}
-          style={buttonState}
+          style={buttonStates[x][y]}
           onPress={() => componetSelection(x, y)}
         >
           <Text>{`(${indexToLetter[y]}, ${x+1})`}</Text>
@@ -28,40 +40,35 @@ export default function App() {
 }
 
 probArrayCompoenents = [];//TO DO, Need to make sure this lines up with the X and Y of status array
-// console.log(row);
-//Github Gen
-const indexToLetter = Object.fromEntries([...Array(26)].map((_, i) => [i, String.fromCharCode(65 + i)]));
-
-function addToArray(x, row){
-  const compArray = row.split("").map((_, y) => (createNewBoxComponent(x, y)));
-  probArrayCompoenents.push(compArray);
-  return compArray
-}
 
 function genProbArrayCompoenents() {
   return gameInfo.getStatusArray().map((row, x) => (
     <View key={`row-${x}`} style={styles.probArrayRow}>
-      {addToArray(x, row)}
+      {row.split("").map((_, y) => {
+          return createNewBoxComponent(x, y);
+        })}
     </View>
   ));
 }
 
-  function componetSelection(x, y){
-    btnElement = probArrayCompoenents[x][y];
-    if (btnStatus == "0") {
-      setBtnStatus("1");
-      gameInfo.setStatusArray(x, y, "1");
-      setButtonStyle(styles.missedButton);
-    } else if (btnStatus == "1") {
-      setBtnStatus("2");
-      gameInfo.setStatusArray(x, y, "2");
-      setButtonStyle(styles.hitButton);
-    } else if (btnStatus == "2") {
-      setBtnStatus(0);
-      gameInfo.setStatusArray(x, y, "0")
-      setButtonStyle(styles.button);
-    }
-    console.log(x, y, btnStatus);
+  function componetSelection(x, y){//Signifcant help of Github Copilot
+    setButtonStates(prevStates => {
+      const newStates = [...prevStates]; // Create a copy of the previous state
+      const currentStatus = newStates[x][y]; // Get the current status of the button
+      if (currentStatus === styles.button) {
+        newStates[x][y] = styles.missedButton; // Change to missed button style
+        gameInfo.setStatusArray(x, y, "1"); // Update gameInfo status array to "1"
+      } else if (currentStatus === styles.missedButton) {
+        newStates[x][y] = styles.hitButton; // Change to hit button style
+        gameInfo.setStatusArray(x, y, "2"); // Update gameInfo status array to "2"
+      } else if (currentStatus === styles.hitButton) {
+        newStates[x][y] = styles.button; // Change back to default button style
+        gameInfo.setStatusArray(x, y, "0"); // Update gameInfo status array to "0"
+      }
+      updateheatMapState();
+      return newStates; // Return the updated state
+    })
+    
   }
 
   return (
