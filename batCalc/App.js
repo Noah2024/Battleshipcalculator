@@ -4,6 +4,10 @@ import React, {useState} from 'react';
 import {gameSpace} from './script.js';
 
 let probArrayCompoenents = [];
+const indexToLetter = [
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 
+  'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+];
 
 function print(){
   console.log("Hello World");
@@ -18,8 +22,9 @@ function createHeatBox(x, y, text){
   const hideInfo = () => {
     setInfoVisible(false);
   }
+  // Remove this view later, its not needed
   return (
-    <View key={`heat${x}-${y}`} style={styles.button}>
+    <View key={`heat${x}-${y}`} style={styles.button}> 
       <TouchableOpacity
         style={[styles.button]}
         onMouseEnter={Platform.OS === 'web' ? showInfo : undefined}
@@ -38,47 +43,74 @@ function createHeatBox(x, y, text){
   );
 }
 
-function toScientificNotation(num){
-  if (num === 0) return "0.00";
-  const exponent = Math.floor(Math.log10(num));
-  const mantissa = num / Math.pow(10, exponent);
-  return `${mantissa.toFixed(2)}e${exponent}`;
+function createNewBoxComponent(x, y){//TO DO: need to do some testing with setting to hits, becuas hits may not work
+  const [buttonStatus, setButtonStatus] = useState(styles.button);
+  
+  const handlePress = () => {
+    console.log("Hanlding Pressed",x, y);
+    setButtonStatus((prevStyle) => {
+      if (prevStyle === styles.button) {
+        gameInfo.setStatusArray(x, y, "1"); // Update gameInfo status array to missed
+        return styles.missedButton; // Change to missed button style
+      } else if (prevStyle === styles.missedButton) {
+        gameInfo.setStatusArray(x, y, "2"); // Update gameInfo status array to hit
+        return styles.hitButton; // Change to hit button style
+      } else if (prevStyle === styles.hitButton) {
+        gameInfo.setStatusArray(x, y, "0"); // Update gameInfo status array to null, or non
+        return styles.button; // Change back to default button style
+      }
+      return prevStyle; // Fallback (shouldn't happen)
+    });
+  };
+
+  return (
+    <TouchableOpacity
+        key={`${x}-${y}`}
+        style={buttonStatus}
+        onPress={() => handlePress()}
+      >
+        <Text>{`(${indexToLetter[y]}, ${x+1})`}</Text>
+      </TouchableOpacity>
+  );
+}
+
+function toDynamicPercentage(num) {
+  if (num === 0) return "0%";
+
+  // Convert the number to a percentage
+  const percentage = num * 100;
+
+  // Dynamically determine the number of decimal places
+  let decimalPlaces;
+  if (percentage >= 10) {
+    decimalPlaces = 0; // No decimals for percentages >= 10
+  } else if (percentage >= 1) {
+    decimalPlaces = 1; // 1 decimal place for percentages between 1 and 10
+  } else {
+    decimalPlaces = 2; // 2 decimal places for percentages < 1
+  }
+
+  // Format the percentage with the determined decimal places
+  return `${percentage.toFixed(decimalPlaces)}%`;
 }
 
 gameInfo = new gameSpace(10, 10);
 
 export default function App() {
-  const indexToLetter = Object.fromEntries([...Array(26)].map((_, i) => [i, String.fromCharCode(65 + i)]));
-  const [heatMapState, setHeatMapState] = useState();
-  const [buttonStates, setButtonStates] = useState(
-    Array(10).fill(null).map(() => Array(10).fill(styles.button)) // 10x10 grid of default styles
-  );
-
-
-
+  
   function updateheatMapState(){
     const probArray = gameInfo.getProbArray();
     //const newState = [...prevState]; // Create a copy of the previous state
       return gameInfo.getProbArray().map((row, x) => {
         return (<View key={`heatRow-${x}`} style={styles.probArrayRow}>
           {row.map((val, y) => {
-          return createHeatBox(x, y, toScientificNotation(val));
+          return createHeatBox(x, y, toDynamicPercentage(val));
         })}
         </View>)
       })
   }
 
-  function createNewBoxComponent(x, y){
-    return (
-      <TouchableOpacity
-          key={`${x}-${y}`}
-          style={buttonStates[x][y]}
-          onPress={() => componetSelection(x, y)}
-        >
-          <Text>{`(${indexToLetter[y]}, ${x+1})`}</Text>
-        </TouchableOpacity>
-    );
-}
+  
 
 probArrayCompoenents = [];//TO DO, Need to make sure this lines up with the X and Y of status array
 
@@ -92,26 +124,6 @@ function genProbArrayCompoenents() {
   ));
   return null
 }
-
-  function componetSelection(x, y){//Signifcant help of Github Copilot
-    setButtonStates(prevStates => {
-      const newStates = [...prevStates]; // Create a copy of the previous state
-      const currentStatus = newStates[x][y]; // Get the current status of the button
-      if (currentStatus === styles.button) {
-        newStates[x][y] = styles.missedButton; // Change to missed button style
-        gameInfo.setStatusArray(x, y, "1"); // Update gameInfo status array to "1"
-      } else if (currentStatus === styles.missedButton) {
-        newStates[x][y] = styles.hitButton; // Change to hit button style
-        gameInfo.setStatusArray(x, y, "2"); // Update gameInfo status array to "2"
-      } else if (currentStatus === styles.hitButton) {
-        newStates[x][y] = styles.button; // Change back to default button style
-        gameInfo.setStatusArray(x, y, "0"); // Update gameInfo status array to "0"
-      }
-      updateheatMapState()
-      return newStates; // Return the updated state
-    })
-    
-  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
