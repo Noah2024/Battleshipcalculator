@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform} from 'react-native';
 import React, {useState} from 'react';
 import {gameSpace} from './script.js';
 
@@ -7,6 +7,42 @@ let probArrayCompoenents = [];
 
 function print(){
   console.log("Hello World");
+}
+
+function createHeatBox(x, y, text){
+  const [infoVisible, setInfoVisible] = useState(false);
+
+  const showInfo = () => {
+    setInfoVisible(true);
+  }
+  const hideInfo = () => {
+    setInfoVisible(false);
+  }
+  return (
+    <View key={`heat${x}-${y}`} style={styles.button}>
+      <TouchableOpacity
+        style={[styles.button]}
+        onMouseEnter={Platform.OS === 'web' ? showInfo : undefined}
+        onMouseLeave={Platform.OS === 'web' ? hideInfo : undefined}
+        onPressIn={Platform.OS !== 'web' ? showInfo : undefined}
+        onPressOut={Platform.OS !== 'web' ? hideInfo : undefined}
+      >
+        <Text style={styles.boxText}>{text}</Text>
+      </TouchableOpacity>
+      {infoVisible && (
+        <View style={styles.infoBox}>
+          <Text style={styles.infoText}>{`(${x}, ${y})`}</Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+function toScientificNotation(num){
+  if (num === 0) return "0.00";
+  const exponent = Math.floor(Math.log10(num));
+  const mantissa = num / Math.pow(10, exponent);
+  return `${mantissa.toFixed(2)}e${exponent}`;
 }
 
 gameInfo = new gameSpace(10, 10);
@@ -18,13 +54,18 @@ export default function App() {
     Array(10).fill(null).map(() => Array(10).fill(styles.button)) // 10x10 grid of default styles
   );
 
-  function updateheatMapState(){
-    console.log(gameInfo.getProbArray());
 
-    // setHeatMapState(prevState => {
-    //   console.log(gameInfo.getProbArray());
-    //   const newState = [...prevState]; // Create a copy of the previous state
-    // })
+
+  function updateheatMapState(){
+    const probArray = gameInfo.getProbArray();
+    //const newState = [...prevState]; // Create a copy of the previous state
+      return gameInfo.getProbArray().map((row, x) => {
+        return (<View key={`heatRow-${x}`} style={styles.probArrayRow}>
+          {row.map((val, y) => {
+          return createHeatBox(x, y, toScientificNotation(val));
+        })}
+        </View>)
+      })
   }
 
   function createNewBoxComponent(x, y){
@@ -43,12 +84,13 @@ probArrayCompoenents = [];//TO DO, Need to make sure this lines up with the X an
 
 function genProbArrayCompoenents() {
   return gameInfo.getStatusArray().map((row, x) => (
-    <View key={`row-${x}`} style={styles.probArrayRow}>
+    <View key={`inputRow-${x}`} style={styles.probArrayRow}>
       {row.split("").map((_, y) => {
           return createNewBoxComponent(x, y);
         })}
     </View>
   ));
+  return null
 }
 
   function componetSelection(x, y){//Signifcant help of Github Copilot
@@ -65,7 +107,7 @@ function genProbArrayCompoenents() {
         newStates[x][y] = styles.button; // Change back to default button style
         gameInfo.setStatusArray(x, y, "0"); // Update gameInfo status array to "0"
       }
-      updateheatMapState();
+      updateheatMapState()
       return newStates; // Return the updated state
     })
     
@@ -86,9 +128,11 @@ function genProbArrayCompoenents() {
         </View>
       </View>
       
-      <StatusBar style="auto" /> {/* Why is this here?*/}
+      {/* <StatusBar style="auto" /> Why is this here? */}
 
-      <View> {genProbArrayCompoenents()} </View>
+      <View> {genProbArrayCompoenents() || null} </View>
+      <Text> -------------------------------------- </Text>
+      <View> {updateheatMapState()} </View>
     </ScrollView>
   );
 }
@@ -137,6 +181,18 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     borderRadius: 5,
+  },
+  infoBox: {
+    marginTop: 5,
+    padding: 5,
+    backgroundColor: '#F2F3F5',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+  },
+  infoText: {
+    fontSize: 10,
+    color: '#333',
   },
 });
 
