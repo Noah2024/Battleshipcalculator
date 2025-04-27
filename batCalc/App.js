@@ -195,16 +195,26 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   infoBox: {
-    marginTop: 5,
-    padding: 5,
+    position: 'absolute', // Position the info box absolutely
+    top: -10, // Adjust to position the box above the main box
+    right: -10, // Align with the right edge of the box
     backgroundColor: '#F2F3F5',
+    padding: 5,
     borderRadius: 5,
     borderWidth: 1,
+    width: 50,
+    height: 30,
     borderColor: '#CCCCCC',
+    zIndex: 10, // Ensure it appears above other elements
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 5, // For Android
   },
   infoText: {
-    fontSize: 10,
+    fontSize: 15,
+    fontWeight: 'bold',
     color: '#333',
   },
 });
-
