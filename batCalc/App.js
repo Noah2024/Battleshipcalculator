@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Platform} from 'react-native';
+import { StyleSheet, Switch, Text, View, ScrollView, TouchableOpacity, Platform, Image} from 'react-native';
 import React, {useState} from 'react';
 import {gameSpace} from './script.js';
 
@@ -110,7 +110,23 @@ export default function App() {
       })
   }
 
+  function swtichStatment () {
+    const [isEnabled, setIsEnabled] = useState(false); // State to track the switch status
   
+    const toggleSwitch = () => setIsEnabled((previousState) => !previousState); // Toggle the state
+    
+    return (
+      <View >
+        <Text>Switch is {isEnabled ? 'ON' : 'OFF'}</Text>
+        <Switch
+          trackColor={{ false: '#767577', true: '#81b0ff' }} // Customize track colors
+          thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'} // Customize thumb color
+          ios_backgroundColor="#3e3e3e" // Background color for iOS
+          onValueChange={toggleSwitch} // Function to handle toggle
+          value={isEnabled} // Current state of the switch
+        />
+      </View>)
+  }
 
 probArrayCompoenents = [];//TO DO, Need to make sure this lines up with the X and Y of status array
 
@@ -141,7 +157,8 @@ function genProbArrayCompoenents() {
       </View>
       
       {/* <StatusBar style="auto" /> Why is this here? */}
-
+      <View> <Image source={require("./assets/AircraftCarrier.png")}/> </View>
+      {swtichStatment()}
       <View> {genProbArrayCompoenents() || null} </View>
       <Text> {"--------------------------------------"} </Text>
       <View> {updateheatMapState()} </View>
