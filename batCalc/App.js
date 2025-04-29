@@ -34,11 +34,11 @@ function createHeatBox(x, y, text){
       >
         <Text style={styles.boxText}>{text}</Text>
       </TouchableOpacity>
-      {infoVisible && (
+      {infoVisible ? (
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>{`(${x}, ${y})`}</Text>
         </View>
-      )}
+        ) : null}
     </View>
   );
 }
@@ -143,7 +143,7 @@ function genProbArrayCompoenents() {
       {/* <StatusBar style="auto" /> Why is this here? */}
 
       <View> {genProbArrayCompoenents() || null} </View>
-      <Text> -------------------------------------- </Text>
+      <Text> {"--------------------------------------"} </Text>
       <View> {updateheatMapState()} </View>
     </ScrollView>
   );
