@@ -166,6 +166,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
+    //Gotta changer sizes later
     backgroundColor: '#DDDDDD',
     padding: 10,
     margin: 10,
